@@ -169,6 +169,7 @@ describe("installEditingAgent", () => {
           "gesture-start",
           "console-errors",
           "watch-keys",
+          "crop-lift",
         ],
       },
     });

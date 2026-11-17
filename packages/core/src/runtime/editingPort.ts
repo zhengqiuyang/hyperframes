@@ -109,6 +109,7 @@ export const EDITING_REQUEST_KINDS = [
   "gesture-start",
   "console-errors",
   "watch-keys",
+  "crop-lift",
 ] as const;
 export type EditingRequestKind = (typeof EDITING_REQUEST_KINDS)[number];
 
@@ -217,6 +218,10 @@ export interface EditingRequests {
   /** The frame cancels these combos outside the elements that own keys, and forwards them and their
    * keyups to this port; an empty list stops. */
   "watch-keys": { params: { combos: string[] }; result: { watching: number } };
+  "crop-lift": {
+    params: { handle: EditingElementHandle; lift: boolean };
+    result: { lifted: boolean; clipPath: string | null };
+  };
 }
 export type EditingParams<K extends EditingRequestKind> = EditingRequests[K]["params"];
 export type EditingResult<K extends EditingRequestKind> = EditingRequests[K]["result"];
@@ -403,6 +408,10 @@ const PARAM_PARSERS: {
   "console-errors": (params) =>
     hasKeys(params, "from") && isOffset(params.from) ? { from: params.from } : null,
   "watch-keys": comboList,
+  "crop-lift": (params) =>
+    hasKeys(params, "handle,lift") && isHandle(params.handle) && typeof params.lift === "boolean"
+      ? { handle: params.handle, lift: params.lift }
+      : null,
 };
 
 /** Validates one request off the wire. Never throws: anything unusable becomes a typed error. */
