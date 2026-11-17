@@ -23,7 +23,11 @@ import type { EditingLayer } from "./editingLayers";
 import type { RuntimeTimelineMessage } from "./types";
 import { wallClearTimeout, wallSetTimeout } from "./wallClock";
 import { parseCombo } from "../keyCombo";
-import { captionWordsParams, type CaptionWordBox, type CaptionWordsParams } from "./editing/captionWords";
+import {
+  captionWordsParams,
+  type CaptionWordBox,
+  type CaptionWordsParams,
+} from "./editing/captionWords";
 import {
   captionTransformParams,
   type CaptionTransformParams,
@@ -225,9 +229,7 @@ export interface EditingRequests {
   /** The frame cancels these combos outside the elements that own keys, and forwards them and their
    * keyups to this port; an empty list stops. */
   "watch-keys": { params: { combos: string[] }; result: { watching: number } };
-  /** Boxes of the words of visible caption groups; a group written as plain text is split into word spans. */
   "caption-words": { params: CaptionWordsParams; result: { boxes: CaptionWordBox[] } };
-  /** Each word's wrapper transform, after writing `set`; null for a word the frame lacks. */
   "caption-transform": { params: CaptionTransformParams; result: { words: CaptionWordState[] } };
 }
 export type EditingParams<K extends EditingRequestKind> = EditingRequests[K]["params"];
