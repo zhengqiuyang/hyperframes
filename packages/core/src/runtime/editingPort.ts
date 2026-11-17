@@ -23,6 +23,12 @@ import type { EditingLayer } from "./editingLayers";
 import type { RuntimeTimelineMessage } from "./types";
 import { wallClearTimeout, wallSetTimeout } from "./wallClock";
 import { parseCombo } from "../keyCombo";
+import { parseAssignAudioGroup, type AssignAudioGroupParams } from "./editing/assignAudioGroup";
+import { parseAudioMeter, type AudioMeterLevels } from "./editing/audioMeter";
+import {
+  parseSetAudioGroupAttribute,
+  type SetAudioGroupAttributeParams,
+} from "./editing/setAudioGroupAttribute";
 
 export {
   buildStableSelector,
@@ -109,6 +115,10 @@ export const EDITING_REQUEST_KINDS = [
   "gesture-start",
   "console-errors",
   "watch-keys",
+  "audio-meter",
+  "document-markup",
+  "set-audio-group-attribute",
+  "assign-audio-group",
 ] as const;
 export type EditingRequestKind = (typeof EDITING_REQUEST_KINDS)[number];
 
@@ -217,6 +227,16 @@ export interface EditingRequests {
   /** The frame cancels these combos outside the elements that own keys, and forwards them and their
    * keyups to this port; an empty list stops. */
   "watch-keys": { params: { combos: string[] }; result: { watching: number } };
+  "audio-meter": { params: { on: boolean }; result: { levels: AudioMeterLevels | null } };
+  "document-markup": { params: NoParams; result: { html: string; baseURI: string } };
+  "set-audio-group-attribute": {
+    params: SetAudioGroupAttributeParams;
+    result: { applied: boolean };
+  };
+  "assign-audio-group": {
+    params: AssignAudioGroupParams;
+    result: { previous: Array<string | null>; changed: boolean };
+  };
 }
 export type EditingParams<K extends EditingRequestKind> = EditingRequests[K]["params"];
 export type EditingResult<K extends EditingRequestKind> = EditingRequests[K]["result"];
@@ -403,6 +423,10 @@ const PARAM_PARSERS: {
   "console-errors": (params) =>
     hasKeys(params, "from") && isOffset(params.from) ? { from: params.from } : null,
   "watch-keys": comboList,
+  "audio-meter": parseAudioMeter,
+  "document-markup": noParams,
+  "set-audio-group-attribute": parseSetAudioGroupAttribute,
+  "assign-audio-group": parseAssignAudioGroup,
 };
 
 /** Validates one request off the wire. Never throws: anything unusable becomes a typed error. */

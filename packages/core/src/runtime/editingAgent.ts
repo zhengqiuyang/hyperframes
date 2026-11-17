@@ -42,6 +42,10 @@ import {
 import { MAX_QUERY_MATCHES } from "./editingElement";
 import { matchCombo, parseCombo, type Combo } from "../keyCombo";
 import { shouldIgnorePlaybackShortcutTarget } from "../typingTarget";
+import { assignAudioGroup } from "./editing/assignAudioGroup";
+import { audioMeter } from "./editing/audioMeter";
+import { documentMarkup } from "./editing/documentMarkup";
+import { setAudioGroupAttribute } from "./editing/setAudioGroupAttribute";
 
 type Handlers = {
   [K in EditingRequestKind]: (
@@ -188,6 +192,10 @@ const HANDLERS: Handlers = {
     return { errors, truncated: from + errors.length < seen.length };
   },
   "watch-keys": ({ combos }, port) => watchKeys(port, combos),
+  "audio-meter": (params) => audioMeter(params, window.__hf?.audioMeter),
+  "document-markup": documentMarkup,
+  "set-audio-group-attribute": setAudioGroupAttribute,
+  "assign-audio-group": (params) => assignAudioGroup(params, elementForHandle),
 };
 
 function serve(port: MessagePort): void {

@@ -169,6 +169,10 @@ describe("installEditingAgent", () => {
           "gesture-start",
           "console-errors",
           "watch-keys",
+          "audio-meter",
+          "document-markup",
+          "set-audio-group-attribute",
+          "assign-audio-group",
         ],
       },
     });
