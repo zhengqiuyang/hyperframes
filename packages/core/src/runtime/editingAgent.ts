@@ -42,6 +42,9 @@ import {
 import { MAX_QUERY_MATCHES } from "./editingElement";
 import { matchCombo, parseCombo, type Combo } from "../keyCombo";
 import { shouldIgnorePlaybackShortcutTarget } from "../typingTarget";
+import { colorGradingStatus } from "./editing/color-grading-status";
+import { colorGradingPreviews } from "./editing/color-grading-previews";
+import { colorGradingPlayback } from "./editing/color-grading-playback";
 
 type Handlers = {
   [K in EditingRequestKind]: (
@@ -188,6 +191,9 @@ const HANDLERS: Handlers = {
     return { errors, truncated: from + errors.length < seen.length };
   },
   "watch-keys": ({ combos }, port) => watchKeys(port, combos),
+  "color-grading-status": colorGradingStatus,
+  "color-grading-previews": colorGradingPreviews,
+  "color-grading-playback": colorGradingPlayback,
 };
 
 function serve(port: MessagePort): void {

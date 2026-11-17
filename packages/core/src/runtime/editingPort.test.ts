@@ -77,6 +77,9 @@ describe("createEditingPortClient", () => {
           "gesture-start",
           "console-errors",
           "watch-keys",
+          "color-grading-status",
+          "color-grading-previews",
+          "color-grading-playback",
         ],
       });
     } finally {
