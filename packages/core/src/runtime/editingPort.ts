@@ -109,6 +109,7 @@ export const EDITING_REQUEST_KINDS = [
   "gesture-start",
   "console-errors",
   "watch-keys",
+  "gsap-snapshot",
 ] as const;
 export type EditingRequestKind = (typeof EDITING_REQUEST_KINDS)[number];
 
@@ -217,6 +218,7 @@ export interface EditingRequests {
   /** The frame cancels these combos outside the elements that own keys, and forwards them and their
    * keyups to this port; an empty list stops. */
   "watch-keys": { params: { combos: string[] }; result: { watching: number } };
+  "gsap-snapshot": { params: NoParams; result: import("./editing/gsapSnapshot").GsapSnapshot };
 }
 export type EditingParams<K extends EditingRequestKind> = EditingRequests[K]["params"];
 export type EditingResult<K extends EditingRequestKind> = EditingRequests[K]["result"];
@@ -403,6 +405,7 @@ const PARAM_PARSERS: {
   "console-errors": (params) =>
     hasKeys(params, "from") && isOffset(params.from) ? { from: params.from } : null,
   "watch-keys": comboList,
+  "gsap-snapshot": noParams,
 };
 
 /** Validates one request off the wire. Never throws: anything unusable becomes a typed error. */

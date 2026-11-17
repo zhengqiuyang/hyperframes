@@ -33,6 +33,7 @@ import { pointerTargetsAt } from "./editingTargets";
 import { layersOf } from "./editingLayers";
 import { drawDrafts } from "./editingDraft";
 import { gestureStart } from "./editingGestureStart";
+import { gsapSnapshot } from "./editing/gsapSnapshot";
 import {
   getLogicalOpacity,
   previewConsoleErrorText,
@@ -188,6 +189,7 @@ const HANDLERS: Handlers = {
     return { errors, truncated: from + errors.length < seen.length };
   },
   "watch-keys": ({ combos }, port) => watchKeys(port, combos),
+  "gsap-snapshot": () => gsapSnapshot(),
 };
 
 function serve(port: MessagePort): void {
