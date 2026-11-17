@@ -1,4 +1,4 @@
-import { audioFailureDiagnostics } from "@hyperframes/engine";
+import { audioFailureDiagnostics, usableCpuCount } from "@hyperframes/engine";
 // fallow-ignore-file unused-type circular-dependency code-duplication complexity
 /**
  * Render Orchestrator Service
@@ -851,6 +851,8 @@ export class RenderQualityError extends Error {
     this.name = "RenderQualityError";
   }
 }
+
+const MIN_CPUS_TO_CAPTURE_DURING_MIX = 4;
 
 export function applyRenderWarningPolicy(
   job: RenderJob,
@@ -4982,6 +4984,7 @@ async function executeRenderPipeline(input: {
       audioFailed.abort(error);
     });
     const mixedAudio = () => audioWait.wait(audioReady);
+    if (usableCpuCount() < MIN_CPUS_TO_CAPTURE_DURING_MIX) await mixedAudio();
 
     resetCaptureAttemptProgress(job);
 
