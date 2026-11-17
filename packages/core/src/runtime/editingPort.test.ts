@@ -77,6 +77,8 @@ describe("createEditingPortClient", () => {
           "gesture-start",
           "console-errors",
           "watch-keys",
+          "caption-words",
+          "caption-transform",
         ],
       });
     } finally {

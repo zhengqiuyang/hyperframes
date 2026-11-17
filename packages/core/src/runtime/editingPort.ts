@@ -23,6 +23,12 @@ import type { EditingLayer } from "./editingLayers";
 import type { RuntimeTimelineMessage } from "./types";
 import { wallClearTimeout, wallSetTimeout } from "./wallClock";
 import { parseCombo } from "../keyCombo";
+import { captionWordsParams, type CaptionWordBox, type CaptionWordsParams } from "./editing/captionWords";
+import {
+  captionTransformParams,
+  type CaptionTransformParams,
+  type CaptionWordState,
+} from "./editing/captionTransform";
 
 export {
   buildStableSelector,
@@ -109,6 +115,8 @@ export const EDITING_REQUEST_KINDS = [
   "gesture-start",
   "console-errors",
   "watch-keys",
+  "caption-words",
+  "caption-transform",
 ] as const;
 export type EditingRequestKind = (typeof EDITING_REQUEST_KINDS)[number];
 
@@ -217,6 +225,10 @@ export interface EditingRequests {
   /** The frame cancels these combos outside the elements that own keys, and forwards them and their
    * keyups to this port; an empty list stops. */
   "watch-keys": { params: { combos: string[] }; result: { watching: number } };
+  /** Boxes of the words of visible caption groups; a group written as plain text is split into word spans. */
+  "caption-words": { params: CaptionWordsParams; result: { boxes: CaptionWordBox[] } };
+  /** Each word's wrapper transform, after writing `set`; null for a word the frame lacks. */
+  "caption-transform": { params: CaptionTransformParams; result: { words: CaptionWordState[] } };
 }
 export type EditingParams<K extends EditingRequestKind> = EditingRequests[K]["params"];
 export type EditingResult<K extends EditingRequestKind> = EditingRequests[K]["result"];
@@ -403,6 +415,8 @@ const PARAM_PARSERS: {
   "console-errors": (params) =>
     hasKeys(params, "from") && isOffset(params.from) ? { from: params.from } : null,
   "watch-keys": comboList,
+  "caption-words": captionWordsParams,
+  "caption-transform": captionTransformParams,
 };
 
 /** Validates one request off the wire. Never throws: anything unusable becomes a typed error. */
